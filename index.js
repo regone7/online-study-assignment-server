@@ -57,6 +57,12 @@ async function run() {
             res.send(result)
 
         })
+        app.delete('/delete/:id',async(req,res)=>{
+            const id= req.params.id;
+            const quary = {_id:new ObjectId(id)}
+            const result = await assignmentCollection.deleteOne(quary)
+            res.send(result)
+          })
         app.post('/assignsubmit', async (req, res) => {
             const infoassignments = req.body;
             // console.log(infoassignments)
