@@ -57,12 +57,26 @@ async function run() {
             res.send(result)
 
         })
-        app.delete('/delete/:id',async(req,res)=>{
-            const id= req.params.id;
-            const quary = {_id:new ObjectId(id)}
+        app.put('/update/:id', async (req, res) => {
+            const id = req.params.id
+            // console.log(id)
+            const updateData = req.body
+            const query = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    ...updateData,
+                },
+            }
+            const result = await assignmentCollection.updateOne(query, updateDoc, options)
+            res.send(result)
+        })
+        app.delete('/delete/:id', async (req, res) => {
+            const id = req.params.id;
+            const quary = { _id: new ObjectId(id) }
             const result = await assignmentCollection.deleteOne(quary)
             res.send(result)
-          })
+        })
         app.post('/assignsubmit', async (req, res) => {
             const infoassignments = req.body;
             // console.log(infoassignments)
