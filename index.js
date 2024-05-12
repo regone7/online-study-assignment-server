@@ -77,6 +77,12 @@ async function run() {
             const result = await assignmentCollection.deleteOne(quary)
             res.send(result)
         })
+
+        app.get('/assignsubmits', async (req, res) => {
+            const cursor = assignmentSubmited.find();
+            const result = await cursor.toArray();
+            res.send(result)
+        })
         app.post('/assignsubmit', async (req, res) => {
             const infoassignments = req.body;
             // console.log(infoassignments)
