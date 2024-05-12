@@ -34,6 +34,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         const assignmentCollection = client.db("assignmentDB").collection("assignment");
+        const assignmentSubmited = client.db("assignmentDB").collection("assignsubmit");
 
         app.get('/assignment', async (req, res) => {
             const cursor = assignmentCollection.find();
@@ -51,11 +52,19 @@ async function run() {
 
         app.post('/assignment', async (req, res) => {
             const infoassignment = req.body;
-            // console.log(infoCraft)
+            // console.log()
             const result = await assignmentCollection.insertOne(infoassignment);
             res.send(result)
 
         })
+        app.post('/assignsubmit', async (req, res) => {
+            const infoassignments = req.body;
+            // console.log(infoassignments)
+            const result = await assignmentSubmited.insertOne(infoassignments);
+            res.send(result)
+
+        })
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
