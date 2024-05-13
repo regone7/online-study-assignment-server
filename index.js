@@ -83,6 +83,13 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result)
         })
+        app.get('/assignsubmits/:id', async (req, res) => {
+            const id = req.params.id;
+            const quary = { _id: new ObjectId(id) }
+            const cursor = assignmentSubmited.findOne(quary);
+            const result = await cursor;
+            res.send(result)
+        })
         app.post('/assignsubmit', async (req, res) => {
             const infoassignments = req.body;
             // console.log(infoassignments)
