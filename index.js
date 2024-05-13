@@ -90,6 +90,13 @@ async function run() {
             const result = await cursor;
             res.send(result)
         })
+        app.get('/assignsubmitseml/:email',async(req,res)=>{
+            // console.log(req.params.email)
+            const email=req.params.email;
+            const quary = {email:email}
+            const result = await assignmentSubmited.find(quary).toArray();
+            res.send(result)
+          })
         app.post('/assignsubmit', async (req, res) => {
             const infoassignments = req.body;
             // console.log(infoassignments)
