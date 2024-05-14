@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+var jwt = require('jsonwebtoken');
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 9000
@@ -36,6 +37,26 @@ async function run() {
         const assignmentCollection = client.db("assignmentDB").collection("assignment");
         const assignmentSubmited = client.db("assignmentDB").collection("assignsubmit");
 
+        // auth
+        app.post('/jwt',async(req,res)=>{
+            const user = req.body;
+            console.log(user)
+            const token =jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1d'})
+            res.cookie('token',token,{
+                httpOnly: true,
+                secure: true,
+                sameSite:'none'
+            })
+            .send({successs:true})
+        })
+        app.post('/logout',async(req,res)=>{
+            const user = req.body;
+            console.log('log out',user)
+            res.clearCookie('token', { maxAge:0}).send({ successs: true })
+        })
+
+
+        // server
         app.get('/assignment', async (req, res) => {
             const cursor = assignmentCollection.find();
             const result = await cursor.toArray();
