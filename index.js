@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 var jwt = require('jsonwebtoken');
+var cookieParser = require('cookie-parser')
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 9000
@@ -9,6 +10,7 @@ const app = express()
 const corsOptions = {
     origin: [
         'http://localhost:5173',
+        "https://online-study-assignment.firebaseapp.com",
 
     ],
     credentials: true,
@@ -16,6 +18,7 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 app.use(express.json())
+app.use(cookieParser())
 
 
 
@@ -42,17 +45,23 @@ async function run() {
             const user = req.body;
             console.log(user)
             const token =jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1d'})
-            res.cookie('token',token,{
+            res.cookie('token', token, {
                 httpOnly: true,
-                secure: true,
-                sameSite:'none'
-            })
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+              })
             .send({successs:true})
         })
         app.post('/logout',async(req,res)=>{
             const user = req.body;
             console.log('log out',user)
-            res.clearCookie('token', { maxAge:0}).send({ successs: true })
+            res.clearCookie('token', {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                maxAge: 0,
+              })
+            .send({ successs: true })
         })
 
 
@@ -64,6 +73,7 @@ async function run() {
         })
 
         app.get('/assignment/:id', async (req, res) => {
+            // console.log('cookirss',req.cookies)
             const id = req.params.id;
             const quary = { _id: new ObjectId(id) }
             const cursor = assignmentCollection.findOne(quary);
